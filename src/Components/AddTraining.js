@@ -28,7 +28,7 @@ const styles = theme => ({
 class AddTraining extends Component {
     constructor(props) {
         super(props);
-        this.state = {open: false, customerList: [], date: '', duration: '', activity: '', selectedOption: null}
+        this.state = {open: false, customerList: [], date: '', duration: '', activity: '', selectedOption: 'https://customerrest.herokuapp.com/api/customers/4'}
     }
 
     handleClickOpen = () => {
@@ -47,7 +47,8 @@ class AddTraining extends Component {
         this.setState({ [name]: Number(event.target.value) });
       };
 
-      handleChanged = (selectedOption) => {
+      handleChanged = (event) => {
+        const selectedOption = event.target.value
         this.setState({ selectedOption });
         console.log(`Option selected:`, selectedOption);
       }
@@ -64,7 +65,7 @@ class AddTraining extends Component {
               date: this.state.date ,
               duration: this.state.duration ,
               activity: this.state.activity ,
-              customer: this.state.customer
+              customer: this.state.selectedOption
 
           }
           this.props.saveTraining(newTraining);
@@ -73,11 +74,12 @@ class AddTraining extends Component {
 
   render() {
     const {classes} = this.props;
-    var customerRetrieval = this.state.customerList.map((customer) => {
-       return customer}
-    );
+    console.log(this.state.customerList );
+    
     const {selectedOption} = this.state;
-
+    var customerRetrieval = () => this.state.customerList.map((c,i) => 
+      (<option key={i} value={c.links[1].href}>{c.lastname + ', ' + c.firstname}</option>)
+      )
     return (
       <div>
         <Dialog
@@ -123,7 +125,9 @@ class AddTraining extends Component {
                 </FormControl>
                 <FormControl className={classes.formControl}>
                   <InputLabel htmlFor="customer-native-simple">Customer</InputLabel>
-                    <Select value={"https://customerrest.herokuapp.com/api/customers/" + selectedOption} onChange={this.handleChanged} name='customer' input={<Input id="customer-native-simple"/>} options={customerRetrieval.firstname} />
+                    <Select value={this.state.selectedOption} onChange={this.handleChanged} name='customer' input={<Input id="customer-native-simple"/>}>
+                     {customerRetrieval()}
+                    </Select>
                 </FormControl>
             </form>
           </DialogContent>
